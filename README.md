@@ -1,10 +1,8 @@
 # 📚 DictionaryApp-PoweredBy-HelperHut
 
-A simple **Dictionary App** built with :contentReference[oaicite:0]{index=0}, :contentReference[oaicite:1]{index=1}, and File System storage.
-
+A simple Dictionary App built with plain Node.js, EJS, and File System storage.
 It helps users create and manage their own **personal vocabulary library** by saving English words with their Bangla meanings.
 
----
 
 ## 🚀 Features
 
@@ -14,7 +12,6 @@ It helps users create and manage their own **personal vocabulary library** by sa
 - ⚡ Fast and lightweight Node.js backend  
 - 🎨 EJS templating for dynamic UI rendering  
 
----
 
 ## 🧰 Tech Stack
 
@@ -23,8 +20,6 @@ It helps users create and manage their own **personal vocabulary library** by sa
 ![JavaScript](https://img.shields.io/badge/JavaScript-111827?style=for-the-badge&logo=javascript&logoColor=F7DF1E)
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
-
----
 
 
 
