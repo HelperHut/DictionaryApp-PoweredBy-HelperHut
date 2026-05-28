@@ -30,6 +30,7 @@ It helps users create and manage their own **personal vocabulary library** by sa
 
 ## ⚙️ Installation & Setup
 
+```bash
 # Clone the repository
 git clone https://github.com/your-username/DictionaryApp-PoweredBy-HelperHut.git
 
