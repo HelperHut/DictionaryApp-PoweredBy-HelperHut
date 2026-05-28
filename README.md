@@ -26,4 +26,18 @@ It helps users create and manage their own **personal vocabulary library** by sa
 
 ---
 
-## 📂 Project Structure
+
+
+## ⚙️ Installation & Setup
+
+# Clone the repository
+git clone https://github.com/your-username/DictionaryApp-PoweredBy-HelperHut.git
+
+# Go into the project directory
+cd DictionaryApp-PoweredBy-HelperHut
+
+# Install dependencies
+npm install
+
+# Run the app
+node app.js
