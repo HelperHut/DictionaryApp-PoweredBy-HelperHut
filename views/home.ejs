@@ -7,121 +7,391 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <style>
-        body {
-            background: #f8f9fa;
-            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
         }
 
-        .app-header {
-            background: #ffffff;
-            border-bottom: 1px solid #e5e7eb;
-            padding: 15px 0;
+        body{
+            font-family: 'Inter', sans-serif;
+            background:
+            radial-gradient(circle at top left, rgba(59,130,246,.15), transparent 300px),
+            radial-gradient(circle at bottom right, rgba(168,85,247,.12), transparent 300px),
+            #0f172a;
+            color:white;
+            min-height:100vh;
         }
 
-        .app-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: #111827;
-            margin: 0;
+        .navbar-custom{
+            padding:20px 0;
+            backdrop-filter: blur(20px);
+            background: rgba(15,23,42,.6);
+            border-bottom:1px solid rgba(255,255,255,.08);
+            position: sticky;
+            top:0;
+            z-index:100;
         }
 
-        .card {
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            box-shadow: none;
+        .logo{
+            font-size:28px;
+            font-weight:800;
+            margin:0;
+            background: linear-gradient(to right,#60a5fa,#c084fc);
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
         }
 
-        .form-control {
-            border-radius: 8px;
-            padding: 10px 12px;
-            border: 1px solid #d1d5db;
+        .hero{
+            padding:70px 0 40px;
         }
 
-        .form-control:focus {
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        .hero-title{
+            font-size:52px;
+            font-weight:800;
+            line-height:1.1;
+            margin-bottom:20px;
         }
 
-        .btn-primary {
-            background: #2563eb;
-            border: none;
-            border-radius: 8px;
-            padding: 10px;
-            font-weight: 500;
+        .hero-desc{
+            color:#94a3b8;
+            font-size:17px;
+            max-width:700px;
+            line-height:1.7;
         }
 
-        .btn-primary:hover {
-            background: #1d4ed8;
+        .glass-card{
+            background: rgba(255,255,255,.06);
+            border:1px solid rgba(255,255,255,.08);
+            backdrop-filter: blur(16px);
+            border-radius:28px;
+            padding:30px;
+            box-shadow:
+            0 10px 30px rgba(0,0,0,.25),
+            inset 0 1px 1px rgba(255,255,255,.05);
         }
 
-        label {
-            font-weight: 500;
-            color: #374151;
+        .section-title{
+            font-size:22px;
+            font-weight:700;
+            margin-bottom:25px;
         }
+
+        .form-label{
+            font-weight:600;
+            margin-bottom:10px;
+            color:#e2e8f0;
+        }
+
+        .form-control{
+            background: rgba(255,255,255,.06);
+            border:1px solid rgba(255,255,255,.08);
+            color:white;
+            border-radius:16px;
+            padding:16px;
+            font-size:15px;
+        }
+
+        .form-control::placeholder{
+            color:#94a3b8;
+        }
+
+        .form-control:focus{
+            background: rgba(255,255,255,.08);
+            color:white;
+            border-color:#60a5fa;
+            box-shadow:0 0 0 5px rgba(96,165,250,.15);
+        }
+
+        .btn-save{
+            width:100%;
+            border:none;
+            border-radius:16px;
+            padding:15px;
+            font-weight:700;
+            font-size:15px;
+            background: linear-gradient(135deg,#3b82f6,#8b5cf6);
+            color:white;
+            transition:.25s;
+        }
+
+        .btn-save:hover{
+            transform:translateY(-2px);
+            box-shadow:0 15px 25px rgba(59,130,246,.25);
+        }
+
+        .dictionary-list{
+            display:grid;
+            grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+            gap:18px;
+            margin-top:25px;
+        }
+
+        .word-card{
+            position:relative;
+            overflow:hidden;
+            border-radius:24px;
+            padding:22px;
+            background:
+            linear-gradient(
+                135deg,
+                rgba(255,255,255,.08),
+                rgba(255,255,255,.03)
+            );
+
+            border:1px solid rgba(255,255,255,.08);
+
+            transition:.25s;
+        }
+
+        .word-card::before{
+            content:"";
+            position:absolute;
+            width:120px;
+            height:120px;
+            background:rgba(96,165,250,.15);
+            border-radius:50%;
+            top:-50px;
+            right:-40px;
+        }
+
+        .word-card:hover{
+            transform:translateY(-5px);
+            border-color:rgba(96,165,250,.4);
+            box-shadow:0 20px 35px rgba(0,0,0,.3);
+        }
+
+        .english-word{
+            font-size:22px;
+            font-weight:800;
+            margin-bottom:12px;
+            color:white;
+            position:relative;
+            z-index:2;
+        }
+
+        .bangla-word{
+            font-size:15px;
+            color:#cbd5e1;
+            line-height:1.6;
+            position:relative;
+            z-index:2;
+        }
+
+        .empty-box{
+            text-align:center;
+            padding:60px 20px;
+            color:#94a3b8;
+        }
+
+        .empty-box h3{
+            font-size:22px;
+            margin-bottom:10px;
+            color:white;
+        }
+
+        .alert{
+            border:none;
+            border-radius:16px;
+            padding:16px;
+        }
+
+        @media(max-width:768px){
+
+            .hero-title{
+                font-size:36px;
+            }
+
+            .glass-card{
+                padding:22px;
+            }
+
+            .dictionary-list{
+                grid-template-columns:1fr;
+            }
+
+        }
+
     </style>
+
 </head>
 
 <body>
 
-<!-- Header -->
-<div class="app-header">
-    <div class="container">
-        <h1 class="app-title">Dictionary App</h1>
-    </div>
-</div>
+    <!-- Navbar -->
+    <div class="navbar-custom">
+        <div class="container d-flex justify-content-between align-items-center">
 
+            <h1 class="logo">
+                📘 Dictionary App
+            </h1>
 
-<!-- Error Message -->
-<% if (err) { %>
-
-    <div class="alert container mt-2 alert-danger">
-        <%= err %>
-    </div>
-
-<% } %>
-
-<!-- Success Message -->
-<% if (msg) { %>
-
-    <div class="alert container mt-2 alert-success">
-        <%= msg %>
-    </div>
-
-<% } %>
-
-<!-- Form Section -->
-<div class="container py-5">
-
-    <div class="row justify-content-center">
-        <div class="col-md-5">
-
-            <div class="card p-4">
-
-                <form action="/" method="post">
-
-                    <div class="mb-3">
-                        <label>English Word</label>
-                        <input type="text" name="englishWord" class="form-control" placeholder="Enter English word" required>
-                    </div>
-
-                    <div class="mb-4">
-                        <label>Bangla Word</label>
-                        <input type="text" name="banglaWord" class="form-control" placeholder="বাংলা শব্দ লিখুন" required>
-                    </div>
-
-                    <button class="btn btn-primary w-100">
-                        Save Word
-                    </button>
-
-                </form>
-
+            <div class="text-secondary">
+                Powered By HelperHut
             </div>
 
         </div>
     </div>
 
-</div>
+    <!-- Hero -->
+    <div class="container hero">
+
+        <h1 class="hero-title">
+            Build Your Own <br>
+            Vocabulary Library
+        </h1>
+
+        <p class="hero-desc">
+            Save English words with Bangla meanings, create your personal learning collection, and improve vocabulary with a modern clean interface.
+        </p>
+
+    </div>
+
+    <div class="container pb-5">
+
+        <!-- Messages -->
+        <% if (err) { %>
+
+            <div class="alert alert-danger mb-4">
+                <%= err %>
+            </div>
+
+        <% } %>
+
+        <% if (msg) { %>
+
+            <div class="alert alert-success mb-4">
+                <%= msg %>
+            </div>
+
+        <% } %>
+
+        <div class="row g-4">
+
+            <!-- Form -->
+            <div class="col-lg-5">
+
+                <div class="glass-card">
+
+                    <h2 class="section-title">
+                        Add New Word
+                    </h2>
+
+                    <form action="/" method="post">
+
+                        <div class="mb-4">
+
+                            <label class="form-label">
+                                English Word
+                            </label>
+
+                            <input
+                                type="text"
+                                name="englishWord"
+                                class="form-control"
+                                placeholder="Enter English word"
+                                required
+                            >
+
+                        </div>
+
+                        <div class="mb-4">
+
+                            <label class="form-label">
+                                Bangla Meaning
+                            </label>
+
+                            <input
+                                type="text"
+                                name="banglaWord"
+                                class="form-control"
+                                placeholder="বাংলা অর্থ লিখুন"
+                                required
+                            >
+
+                        </div>
+
+                        <button class="btn-save">
+                            Save Word
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+            <!-- Words -->
+            <div class="col-lg-7">
+
+                <div class="glass-card">
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+
+                        <h2 class="section-title m-0">
+                            Saved Words
+                        </h2>
+
+                        <span class="badge text-bg-primary p-2 px-3">
+                            <%= data.length %> Words
+                        </span>
+
+                    </div>
+
+                    <% if (data && data.length > 0) { %>
+
+                        <div class="dictionary-list">
+
+                            <% data.forEach((item) => {
+
+                                const [en, bn] = item.split(":");
+
+                            %>
+
+                                <div class="word-card">
+
+                                    <div class="english-word">
+                                        <%= en %>
+                                    </div>
+
+                                    <div class="bangla-word">
+                                        <%= bn %>
+                                    </div>
+
+                                </div>
+
+                            <% }) %>
+
+                        </div>
+
+                    <% } else { %>
+
+                        <div class="empty-box">
+
+                            <h3>
+                                No Words Added
+                            </h3>
+
+                            <p>
+                                Start building your vocabulary collection.
+                            </p>
+
+                        </div>
+
+                    <% } %>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
 
 </body>
 </html>

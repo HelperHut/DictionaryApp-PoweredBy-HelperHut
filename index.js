@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs')
 const ejs = require('ejs')
 
-const PORT = 5000
+const PORT = process.env.PORT || 5000;
 
 function homeEjs(req, res, value) {
     const filePath = path.join(__dirname, "views", "home.ejs");
@@ -21,10 +21,26 @@ function homeEjs(req, res, value) {
         res.end(html)
     })
 }
-const getHomeRouter = async (req, res) => {
+
+const Words = () =>{
+    const dir = path.join(__dirname, "Words");
+
+    const files = fs.readdirSync(dir)
+
+    const filesPaths = files.map((i) => path.join(__dirname, "Words", i))
+
+    const alldata = filesPaths
+        .map((file) => fs.readFileSync(file, "utf8").split("\n"))
+        .flatMap((lines) => lines.filter((line) => line.trim() !== ""));
+    return alldata  
+}
+
+const getHomeRouter = (req, res) => {
+    const alldata = Words()
     homeEjs(req, res, {
         err: null,
-        msg: null
+        msg: null,
+        data:alldata
     });
 };
 
@@ -64,10 +80,13 @@ const postHomeRouter = async (req, res) => {
         const param = new URLSearchParams(body)
         const englishWord = param.get("englishWord").trim()
         const banglaWord = param.get("banglaWord").trim()
+        const alldata = Words()
         if (!englishWord || !banglaWord) {
             return homeEjs(req, res, {
                 err: "All fields required",
-                msg: null
+                msg: null,
+                data:alldata
+
             });
         }
         const dir = path.join(__dirname, "Words");
@@ -79,7 +98,8 @@ const postHomeRouter = async (req, res) => {
         if (parmission) {
             return homeEjs(req, res, {
                 err: "Word already exists",
-                msg: null
+                msg: null,
+                data:alldata
             });
         }
 
@@ -89,7 +109,8 @@ const postHomeRouter = async (req, res) => {
             }
             homeEjs(req, res, {
                 err: null,
-                msg: "Word Uploaded"
+                msg: "Word Uploaded",
+                data:alldata
             });
         })
 
