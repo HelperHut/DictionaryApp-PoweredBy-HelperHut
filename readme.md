@@ -36,4 +36,4 @@ cd DictionaryApp-PoweredBy-HelperHut
 npm install
 
 # Run the app
-node app.js
+node start
