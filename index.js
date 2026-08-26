@@ -5,6 +5,9 @@ const ejs = require('ejs')
 
 const PORT = process.env.PORT || 5000;
 
+let tomporaryData = []
+
+
 function homeEjs(req, res, value) {
     const filePath = path.join(__dirname, "views", "home.ejs");
 
@@ -22,7 +25,7 @@ function homeEjs(req, res, value) {
     })
 }
 
-const Words = () =>{
+const Words = () => {
     const dir = path.join(__dirname, "Words");
 
     const files = fs.readdirSync(dir)
@@ -32,7 +35,7 @@ const Words = () =>{
     const alldata = filesPaths
         .map((file) => fs.readFileSync(file, "utf8").split("\n"))
         .flatMap((lines) => lines.filter((line) => line.trim() !== ""));
-    return alldata  
+    return alldata
 }
 
 const getHomeRouter = (req, res) => {
@@ -40,7 +43,8 @@ const getHomeRouter = (req, res) => {
     homeEjs(req, res, {
         err: null,
         msg: null,
-        data:alldata
+        data: alldata,
+        tomporaryData: tomporaryData
     });
 };
 
@@ -60,7 +64,7 @@ const existingWord = async (fileName, englishWord) => {
             }
             const lines = data.split("\n")
             for (let i = 0; i < lines.length; i++) {
-                const [En, Bn] = lines[i].split(":")
+                const [En, Tr] = lines[i].split(":")
                 if (En && En.toLowerCase() === englishWord.toLowerCase()) {
                     return resolve(true)
                 }
@@ -69,6 +73,83 @@ const existingWord = async (fileName, englishWord) => {
         })
     })
 }
+
+const deleteRouter = (req, res) => {
+
+    let body = "";
+
+    req.on("data", chunk => {
+        body += chunk;
+    });
+
+    req.on("end", () => {
+
+        try {
+
+            const { englishWord, translateWords } = JSON.parse(body);
+
+            if (!englishWord) {
+                throw new Error("undefined englishWord");
+            }
+
+            const dir = path.join(__dirname, "Words");
+            const fileName = path.join(
+                dir,
+                englishWord[0].toUpperCase() + "-Words.txt"
+            );
+
+            fs.readFile(fileName, "utf8", (err, fileData) => {
+
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+
+                const target = `${englishWord}:${translateWords}`.trim();
+
+                const lines = fileData
+                    .split("\n")
+                    .filter(line => line.trim() !== "")
+                    .filter(line => line.trim() !== target);
+
+                fs.writeFile(fileName, lines.join("\n"), (err) => {
+
+                    if (err) {
+                        console.log(err);
+                        return;
+                    }
+
+                    // ✅ FIX: correct filter (no push)
+                    tomporaryData = tomporaryData.filter(item => {
+                        if (Array.isArray(item)) {
+                            return `${item[0]}:${item[1]}` !== target;
+                        }
+                        return item.trim() !== target;
+                    });
+
+                    console.log("Deleted successfully");
+                    const alldata = Words()
+                    homeEjs(req, res, {
+                        err: null,
+                        msg: "Word Deleted",
+                        data: alldata,
+                        tomporaryData: tomporaryData
+                    });
+                });
+            });
+
+        } catch (error) {
+            console.log(error);
+
+            homeEjs(req, res, {
+                err: error.message,
+                msg: null,
+                data: alldata,
+                tomporaryData: tomporaryData
+            });
+        }
+    });
+};
 
 const postHomeRouter = async (req, res) => {
     let body = "";
@@ -79,14 +160,14 @@ const postHomeRouter = async (req, res) => {
     req.on("end", async () => {
         const param = new URLSearchParams(body)
         const englishWord = param.get("englishWord").trim()
-        const banglaWord = param.get("banglaWord").trim()
+        const translateWord = param.get("translateWord").trim()
         const alldata = Words()
-        if (!englishWord || !banglaWord) {
+        if (!englishWord || !translateWord) {
             return homeEjs(req, res, {
                 err: "All fields required",
                 msg: null,
-                data:alldata
-
+                data: alldata,
+                tomporaryData: tomporaryData
             });
         }
         const dir = path.join(__dirname, "Words");
@@ -99,18 +180,34 @@ const postHomeRouter = async (req, res) => {
             return homeEjs(req, res, {
                 err: "Word already exists",
                 msg: null,
-                data:alldata
+                data: alldata,
+                tomporaryData: tomporaryData
             });
         }
 
-        fs.appendFile(fileName, `${englishWord}:${banglaWord}\n`, (err) => {
+        if (tomporaryData.length === 5) {
+            tomporaryData.shift()
+        }
+        tomporaryData.push(`${englishWord}:${translateWord}`)
+
+
+        // return homeEjs(req, res, {
+        //     err: "d already exists",
+        //     msg: null,
+        //     data: alldata,
+        //     tomporaryData: tomporaryData
+        // });
+
+        fs.appendFile(fileName, `${englishWord}:${translateWord}\n`, (err) => {
             if (err) {
                 throw new Error("Server Error")
             }
+
             homeEjs(req, res, {
                 err: null,
                 msg: "Word Uploaded",
-                data:alldata
+                data: alldata,
+                tomporaryData: tomporaryData
             });
         })
 
@@ -140,7 +237,15 @@ const Server = http.createServer(async (req, res) => {
                 res.end("Server Error")
             )
         }
-    } else {
+    } else if (req.method === "DELETE" && req.url === "/delete-word") {
+        deleteRouter(req , res)
+    }
+    else if (req.url === "/home.js") {
+        const js = fs.readFileSync("./views/home.js");
+        res.writeHead(200, { "Content-Type": "application/javascript" });
+        res.end(js);
+    }
+    else {
         return (
             res.writeHead(500),
             res.end("Server Error")
@@ -151,5 +256,3 @@ const Server = http.createServer(async (req, res) => {
 })
 
 Server.listen(PORT, console.log(`Server running at http://127.0.0.1:${PORT}/`));
-
-
